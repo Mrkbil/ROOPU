@@ -26,13 +26,16 @@ def get_face_analyser() -> Any:
             # removed genderage
             allowed_modules = roop.globals.g_desired_face_analysis
             roop.globals.g_current_face_analysis = roop.globals.g_desired_face_analysis
-            if roop.globals.CFG.force_cpu:
+            print('a2')
+            # roop.globals.CFG.force_cpu Error from setting
+            if False:
                 print("Forcing CPU for Face Analysis")
                 FACE_ANALYSER = insightface.app.FaceAnalysis(
                     name="buffalo_l",
                     root=model_path, providers=["CPUExecutionProvider"],allowed_modules=allowed_modules
                 )
             else:
+                print('ap')
                 FACE_ANALYSER = insightface.app.FaceAnalysis(
                     name="buffalo_l", root=model_path, providers=roop.globals.execution_providers,allowed_modules=allowed_modules
                 )
@@ -63,7 +66,6 @@ def get_all_faces(frame: Frame) -> Any:
 def extract_face_images(source_filename, video_info, extra_padding=-1.0):
     face_data = []
     source_image = None
-
     if video_info[0]:
         frame = get_video_frame(source_filename, video_info[1])
         if frame is not None:
@@ -75,6 +77,7 @@ def extract_face_images(source_filename, video_info, extra_padding=-1.0):
 
     faces = get_all_faces(source_image)
     if faces is None:
+        print("returing face is none")
         return face_data
 
     i = 0
@@ -126,6 +129,7 @@ def extract_face_images(source_filename, video_info, extra_padding=-1.0):
 
         i += 1
         face_data.append([face, face_temp])
+
     return face_data
 
 

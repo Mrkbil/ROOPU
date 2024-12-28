@@ -13,6 +13,7 @@ providerlist = None
 
 settings_controls = []
 
+
 def settings_tab():
     from roop.core import suggest_execution_providers
     global providerlist

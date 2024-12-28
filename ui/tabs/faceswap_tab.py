@@ -313,9 +313,9 @@ def on_add_local_folder(folder):
 
 
 def on_srcfile_changed(srcfiles, progress=gr.Progress()):
-    #srcfiles=['']
+    srcfiles=['E:\\Files\\ROOPU\\temp\\8a151311fc34a0f89f54057cd52a19130c702764e2a331797883db2676f2ab46\\Rakibul_Islam_sq.jpg']
     global SELECTION_FACES_DATA, IS_INPUT, input_faces, face_selection, last_image
-    
+    print(srcfiles)
     IS_INPUT = True
 
     if srcfiles is None or len(srcfiles) < 1:
@@ -347,8 +347,8 @@ def on_srcfile_changed(srcfiles, progress=gr.Progress()):
                         face.mask_offsets = (0,0,0,0,1,20)
                         face_set.faces.append(face)
                         if is_first: 
-                            # image = util.convert_to_gradio(f[1])
-                            # ui.globals.ui_input_thumbs.append(image)
+                            image = util.convert_to_gradio(f[1])
+                            ui.globals.ui_input_thumbs.append(image)
                             is_first = False
                         face_set.ref_images.append(get_image_frame(filename))
             if len(face_set.faces) > 0:
@@ -357,21 +357,22 @@ def on_srcfile_changed(srcfiles, progress=gr.Progress()):
                 roop.globals.INPUT_FACESETS.append(face_set)
                                         
         elif util.has_image_extension(source_path):
-            progress(0, desc="Retrieving faces from image")      
+            #progress(0, desc="Retrieving faces from image")
             roop.globals.source_path = source_path
+
             SELECTION_FACES_DATA = extract_face_images(roop.globals.source_path,  (False, 0))
-            progress(0.5, desc="Retrieving faces from image")
+            #progress(0.5, desc="Retrieving faces from image")
             for f in SELECTION_FACES_DATA:
                 face_set = FaceSet()
                 face = f[0]
                 face.mask_offsets = (0,0,0,0,1,20)
                 face_set.faces.append(face)
-                # image = util.convert_to_gradio(f[1])
-                # ui.globals.ui_input_thumbs.append(image)
+                image = util.convert_to_gradio(f[1])
+                ui.globals.ui_input_thumbs.append(image)
                 roop.globals.INPUT_FACESETS.append(face_set)
 
     print(roop.globals.INPUT_FACESETS)
-    progress(1.0)
+    #progress(1.0)
     return gr.Column(visible=False), None, ui.globals.ui_input_thumbs,None
 
 
@@ -832,3 +833,6 @@ def display_output(filename):
         else:
             current_frame = get_image_frame(filename)
         return gr.Image(visible=True, value=util.convert_to_gradio(current_frame)), gr.Video(visible=False)
+
+
+on_srcfile_changed(['aa'])
