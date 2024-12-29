@@ -139,7 +139,7 @@ def faceswap_tab():
                     with gr.Column(scale=2):
                         local_folder = gr.Textbox(show_label=False, placeholder="/content/", interactive=True)
                 with gr.Row(variant='panel'):
-                    bt_srcfiles = gr.Files(label='Source Images or Facesets', file_count="multiple", file_types=["image", ".fsz"], elem_id='filelist', height=233)
+                    #bt_srcfiles = gr.Files(label='Source Images or Facesets', file_count="multiple", file_types=["image", ".fsz"], elem_id='filelist', height=233)
                     bt_destfiles = gr.Files(label='Target File(s)', file_count="multiple", file_types=["image", "video"], elem_id='filelist', height=233)
                 with gr.Row(variant='panel'):
                     gr.Markdown('')
@@ -222,7 +222,7 @@ def faceswap_tab():
     bt_move_right_target.click(fn=move_selected_target, inputs=[bt_move_right_target], outputs=[target_faces])
 
     bt_remove_selected_input_face.click(fn=remove_selected_input_face, outputs=[input_faces])
-    bt_srcfiles.change(fn=on_srcfile_changed, show_progress='full', inputs=bt_srcfiles, outputs=[dynamic_face_selection, face_selection, input_faces, bt_srcfiles])
+    #bt_srcfiles.change(fn=on_srcfile_changed, show_progress='full', inputs=bt_srcfiles, outputs=[dynamic_face_selection, face_selection, input_faces, bt_srcfiles])
 
     mask_top.release(fn=on_mask_top_changed, inputs=[mask_top], show_progress='hidden')
     mask_bottom.release(fn=on_mask_bottom_changed, inputs=[mask_bottom], show_progress='hidden')
@@ -347,8 +347,8 @@ def on_srcfile_changed(srcfiles, progress=gr.Progress()):
                         face.mask_offsets = (0,0,0,0,1,20)
                         face_set.faces.append(face)
                         if is_first: 
-                            image = util.convert_to_gradio(f[1])
-                            ui.globals.ui_input_thumbs.append(image)
+                            # image = util.convert_to_gradio(f[1])
+                            # ui.globals.ui_input_thumbs.append(image)
                             is_first = False
                         face_set.ref_images.append(get_image_frame(filename))
             if len(face_set.faces) > 0:
@@ -367,13 +367,13 @@ def on_srcfile_changed(srcfiles, progress=gr.Progress()):
                 face = f[0]
                 face.mask_offsets = (0,0,0,0,1,20)
                 face_set.faces.append(face)
-                image = util.convert_to_gradio(f[1])
-                ui.globals.ui_input_thumbs.append(image)
+                # image = util.convert_to_gradio(f[1])
+                # ui.globals.ui_input_thumbs.append(image)
                 roop.globals.INPUT_FACESETS.append(face_set)
 
     print(roop.globals.INPUT_FACESETS)
     #progress(1.0)
-    return gr.Column(visible=False), None, ui.globals.ui_input_thumbs,None
+    return None, None, None,None
 
 
 def on_select_input_face(evt: gr.SelectData):
