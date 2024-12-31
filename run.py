@@ -40,21 +40,21 @@ on_use_face_from_selected(target_faces,1)
 on_destfiles_changed(destfiles)
 start_swap(
     upsample=upsample_options[0],  # ["128px", "256px", "512px"]
-    enhancer=enhancer_options[0],  # ["None", "Codeformer", "DMDNet", "GFPGAN", "GPEN", "Restoreformer++"]
+    enhancer=enhancer_options[3],  # ["None", "Codeformer", "DMDNet", "GFPGAN", "GPEN", "Restoreformer++"]
     detection=detection_options[0], # ["Selected face", "First found", "All input faces", "All faces", "All female", "All male"]
     keep_frames=True,
     wait_after_extraction=False,
     skip_audio=False,
     face_distance=0.95,
     blend_ratio=0.75,
-    selected_mask_engine=selected_mask_engine_options[2],  # "DFL XSeg"
+    selected_mask_engine=selected_mask_engine_options[0],  # "DFL XSeg"
     clip_text="cup,hands,hair,banana",
     processing_method=processing_method_options[0],  # "Extract Frames to media"
     no_face_action=no_face_action_options[0],  # "Use untouched original frame"
     vr_mode=False,
     autorotate=False,
     restore_original_mouth=False,
-    num_swap_steps=1,
+    num_swap_steps=2,
     output_method='File'
 )
 
