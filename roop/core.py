@@ -278,8 +278,6 @@ def batch_process(output_method, files:list[ProcessEntry], use_new_method) -> No
             imagefiles.append(f)
 
         elif util.is_video(fullname) or util.has_extension(fullname, ['gif']):
-            print("fullname",fullname)
-            print(roop.globals.output_path)
             destination = util.get_destfilename_from_path(fullname, roop.globals.output_path, f'__temp.{roop.globals.CFG.output_video_format}')
             f.finalname = destination
             videofiles.append(f)

@@ -1,9 +1,11 @@
+import os
+
 from settings import Settings
 from typing import List
 
 source_path = None
 target_path = None
-output_path = None
+output_path = os.path.abspath(os.path.join(os.getcwd(), "output"))
 target_folder_path = None
 startup_args = None
 

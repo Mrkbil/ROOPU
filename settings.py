@@ -11,7 +11,7 @@ class Settings:
             server_share=False,
             output_image_format="png",
             output_video_format="mp4",
-            output_video_codec="libx264",
+            output_video_codec="libx264",   #['libx264', 'libx265', 'libvpx-vp9', 'h264_nvenc', 'hevc_nvenc']
             video_quality=14,
             clear_output=True,
             max_threads=10,
