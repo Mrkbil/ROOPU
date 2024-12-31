@@ -47,7 +47,7 @@ start_swap(
     skip_audio=False,
     face_distance=0.65,
     blend_ratio=0.65,
-    selected_mask_engine=selected_mask_engine_options[1],  # "DFL XSeg"
+    selected_mask_engine=selected_mask_engine_options[0],  # "DFL XSeg"
     clip_text="cup,hands,hair,banana",
     processing_method=processing_method_options[0],  # "Extract Frames to media"
     no_face_action=no_face_action_options[0],  # "Use untouched original frame"
