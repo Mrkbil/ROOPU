@@ -1,6 +1,6 @@
 clear_output: true
 force_cpu: false
-max_threads: 3
+max_threads: 2560
 memory_limit: 0
 output_image_format: png
 output_template: '{file}_{time}'
