@@ -313,6 +313,7 @@ def batch_process(output_method, files:list[ProcessEntry], use_new_method) -> No
             if is_streaming_only == False and roop.globals.keep_frames or not use_new_method:
                 util.create_temp(v.filename)
                 update_status('Extracting frames...')
+                print("Frame: ", v.endframe)
                 ffmpeg.extract_frames(v.filename,v.startframe,v.endframe, fps)
                 if not roop.globals.processing:
                     end_processing('Processing stopped!')

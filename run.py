@@ -1,8 +1,6 @@
 from faceswap_tab import on_srcfile_changed, on_use_face_from_selected, on_destfiles_changed, start_swap
 import os
 
-import os
-
 
 def get_files(directory, extension=None, start_range=None, end_range=None):
     if not os.path.isdir(directory):
