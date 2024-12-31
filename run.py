@@ -45,16 +45,16 @@ start_swap(
     keep_frames=True,
     wait_after_extraction=False,
     skip_audio=False,
-    face_distance=0.65,
-    blend_ratio=0.65,
-    selected_mask_engine=selected_mask_engine_options[0],  # "DFL XSeg"
+    face_distance=0.95,
+    blend_ratio=0.75,
+    selected_mask_engine=selected_mask_engine_options[2],  # "DFL XSeg"
     clip_text="cup,hands,hair,banana",
     processing_method=processing_method_options[0],  # "Extract Frames to media"
     no_face_action=no_face_action_options[0],  # "Use untouched original frame"
     vr_mode=False,
     autorotate=False,
     restore_original_mouth=False,
-    num_swap_steps=2,
+    num_swap_steps=1,
     output_method='File'
 )
 
