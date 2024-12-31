@@ -40,7 +40,7 @@ on_use_face_from_selected(target_faces,1)
 on_destfiles_changed(destfiles)
 start_swap(
     upsample=upsample_options[0],  # ["128px", "256px", "512px"]
-    enhancer=enhancer_options[3],  # ["None", "Codeformer", "DMDNet", "GFPGAN", "GPEN", "Restoreformer++"]
+    enhancer=enhancer_options[0],  # ["None", "Codeformer", "DMDNet", "GFPGAN", "GPEN", "Restoreformer++"]
     detection=detection_options[0], # ["Selected face", "First found", "All input faces", "All faces", "All female", "All male"]
     keep_frames=True,
     wait_after_extraction=False,
