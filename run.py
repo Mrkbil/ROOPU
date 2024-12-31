@@ -28,11 +28,11 @@ file_extension = ".png"
 target_directory_path = "new/temp/homat/"
 
 
-srcfiles=['E:\\Files\\ROOPU\\new\\Rakibul_Islam_sq.jpg']
-target_faces=['E:\\Files\\ROOPU\\new\\t.png']
-# target_faces=[]
+srcfiles=['E:\\Files\\ROOPU\\new\\m.jpg']
+# target_faces=['E:\\Files\\ROOPU\\new\\s.png']
+target_faces=[]
 #target_faces=get_files(target_directory_path, file_extension)
-destfiles=['E:\\Files\\ROOPU\\new\\homat.mp4']
+destfiles=['E:\\Files\\ROOPU\\new\\homa.mp4']
 # destfiles=get_files(directory_path, file_extension)
 print(srcfiles)
 print(target_faces)
