@@ -2,6 +2,9 @@ import os
 import shutil
 import pathlib
 import gradio as gr
+import numpy as np
+from PIL import Image
+
 import roop.utilities as util
 import roop.globals
 import ui.globals
@@ -39,6 +42,7 @@ current_video_fps = 50
 manual_masking = False
 
 
+
 def faceswap_tab():
     global no_face_choices, previewimage
 
@@ -48,16 +52,16 @@ def faceswap_tab():
                 with gr.Row():
                     input_faces = gr.Gallery(label="Input faces gallery", allow_preview=False, preview=False, height=138, columns=64, object_fit="scale-down", interactive=False)
                     target_faces = gr.Gallery(label="Target faces gallery", allow_preview=False, preview=False, height=138, columns=64, object_fit="scale-down", interactive=False)
-                with gr.Row():
-                    bt_move_left_input = gr.Button("⬅ Move left", size='sm')
-                    bt_move_right_input = gr.Button("➡ Move right", size='sm')
-                    bt_move_left_target = gr.Button("⬅ Move left", size='sm')
-                    bt_move_right_target = gr.Button("➡ Move right", size='sm')
-                with gr.Row():
-                    bt_remove_selected_input_face = gr.Button("❌ Remove selected", size='sm')
-                    bt_clear_input_faces = gr.Button("💥 Clear all", variant='stop', size='sm')
-                    bt_remove_selected_target_face = gr.Button("❌ Remove selected", size='sm')
-                    bt_add_local = gr.Button('Add local files from', size='sm')
+                # with gr.Row():
+                #     bt_move_left_input = gr.Button("⬅ Move left", size='sm')
+                #     bt_move_right_input = gr.Button("➡ Move right", size='sm')
+                #     bt_move_left_target = gr.Button("⬅ Move left", size='sm')
+                #     bt_move_right_target = gr.Button("➡ Move right", size='sm')
+                # with gr.Row():
+                #     bt_remove_selected_input_face = gr.Button("❌ Remove selected", size='sm')
+                #     bt_clear_input_faces = gr.Button("💥 Clear all", variant='stop', size='sm')
+                #     bt_remove_selected_target_face = gr.Button("❌ Remove selected", size='sm')
+                #     bt_add_local = gr.Button('Add local files from', size='sm')
 
                 with gr.Row():
                     with gr.Column(scale=2):
@@ -216,12 +220,12 @@ def faceswap_tab():
     previewoutputs = [previewimage, maskimage, preview_frame_num] 
     input_faces.select(on_select_input_face, None, None).success(fn=on_preview_frame_changed, inputs=previewinputs, outputs=previewoutputs)
     
-    bt_move_left_input.click(fn=move_selected_input, inputs=[bt_move_left_input], outputs=[input_faces])
-    bt_move_right_input.click(fn=move_selected_input, inputs=[bt_move_right_input], outputs=[input_faces])
-    bt_move_left_target.click(fn=move_selected_target, inputs=[bt_move_left_target], outputs=[target_faces])
-    bt_move_right_target.click(fn=move_selected_target, inputs=[bt_move_right_target], outputs=[target_faces])
+    # bt_move_left_input.click(fn=move_selected_input, inputs=[bt_move_left_input], outputs=[input_faces])
+    # bt_move_right_input.click(fn=move_selected_input, inputs=[bt_move_right_input], outputs=[input_faces])
+    # bt_move_left_target.click(fn=move_selected_target, inputs=[bt_move_left_target], outputs=[target_faces])
+    # bt_move_right_target.click(fn=move_selected_target, inputs=[bt_move_right_target], outputs=[target_faces])
 
-    bt_remove_selected_input_face.click(fn=remove_selected_input_face, outputs=[input_faces])
+    # bt_remove_selected_input_face.click(fn=remove_selected_input_face, outputs=[input_faces])
     #bt_srcfiles.change(fn=on_srcfile_changed, show_progress='full', inputs=bt_srcfiles, outputs=[dynamic_face_selection, face_selection, input_faces, bt_srcfiles])
 
     mask_top.release(fn=on_mask_top_changed, inputs=[mask_top], show_progress='hidden')
@@ -233,7 +237,7 @@ def faceswap_tab():
     selected_mask_engine.change(fn=on_mask_engine_changed, inputs=[selected_mask_engine], outputs=[clip_text], show_progress='hidden')
 
     target_faces.select(on_select_target_face, None, None)
-    bt_remove_selected_target_face.click(fn=remove_selected_target_face, outputs=[target_faces])
+    # bt_remove_selected_target_face.click(fn=remove_selected_target_face, outputs=[target_faces])
 
     forced_fps.change(fn=on_fps_changed, inputs=[forced_fps], show_progress='hidden')
     bt_destfiles.change(fn=on_destfiles_changed, inputs=[bt_destfiles], outputs=[preview_frame_num, text_frame_clip], show_progress='hidden').success(fn=on_preview_frame_changed, inputs=previewinputs, outputs=previewoutputs, show_progress='hidden')
@@ -245,9 +249,9 @@ def faceswap_tab():
     bt_faceselect.click(fn=on_selected_face, outputs=[input_faces, target_faces, selected_face_detection])
     bt_cancelfaceselect.click(fn=on_end_face_selection, outputs=[dynamic_face_selection, face_selection])
 
-    bt_clear_input_faces.click(fn=on_clear_input_faces, outputs=[input_faces])
+    # bt_clear_input_faces.click(fn=on_clear_input_faces, outputs=[input_faces])
 
-    bt_add_local.click(fn=on_add_local_folder, inputs=[local_folder], outputs=[bt_destfiles])
+    # bt_add_local.click(fn=on_add_local_folder, inputs=[local_folder], outputs=[bt_destfiles])
     bt_preview_mask.click(fn=on_preview_mask, inputs=[preview_frame_num, bt_destfiles, clip_text, selected_mask_engine], outputs=[previewimage]) 
 
     start_event = bt_start.click(fn=start_swap, 
@@ -286,6 +290,7 @@ def on_mask_blur_changed(mask_offset):
 
 
 def set_mask_offset(index, mask_offset):
+    print("set_mask_offset")
     global SELECTED_INPUT_FACE_INDEX
 
     if len(roop.globals.INPUT_FACESETS) > SELECTED_INPUT_FACE_INDEX:
@@ -300,12 +305,14 @@ def set_mask_offset(index, mask_offset):
         roop.globals.INPUT_FACESETS[SELECTED_INPUT_FACE_INDEX].faces[0].mask_offsets = offs
 
 def on_mask_engine_changed(mask_engine):
+    print("on_mask_engine_changed")
     if mask_engine == "Clip2Seg":
         return gr.Textbox(interactive=True)
     return gr.Textbox(interactive=False)
 
 
 def on_add_local_folder(folder):
+    print("on_add_local_folder")
     files = util.get_local_files_from_folder(folder)
     if files is None:
         gr.Warning("Empty folder or folder not found!")
@@ -313,7 +320,7 @@ def on_add_local_folder(folder):
 
 
 def on_srcfile_changed(srcfiles, progress=gr.Progress()):
-    srcfiles=['E:\\Files\\ROOPU\\temp\\8a151311fc34a0f89f54057cd52a19130c702764e2a331797883db2676f2ab46\\Rakibul_Islam_sq.jpg']
+    srcfiles=['E:\\Files\\ROOPU\\new\\Rakibul_Islam_sq.jpg']
     global SELECTION_FACES_DATA, IS_INPUT, input_faces, face_selection, last_image
     print(srcfiles)
     IS_INPUT = True
@@ -377,12 +384,14 @@ def on_srcfile_changed(srcfiles, progress=gr.Progress()):
 
 
 def on_select_input_face(evt: gr.SelectData):
+    print("on_select_input_face")
     global SELECTED_INPUT_FACE_INDEX
 
     SELECTED_INPUT_FACE_INDEX = evt.index
 
 
 def remove_selected_input_face():
+    print("remove_selected_input_face")
     global SELECTED_INPUT_FACE_INDEX
 
     if len(roop.globals.INPUT_FACESETS) > SELECTED_INPUT_FACE_INDEX:
@@ -395,6 +404,7 @@ def remove_selected_input_face():
     return ui.globals.ui_input_thumbs
 
 def move_selected_input(button_text):
+    print("move_selected_input")
     global SELECTED_INPUT_FACE_INDEX
 
     if button_text == "⬅ Move left":
@@ -414,6 +424,7 @@ def move_selected_input(button_text):
         
 
 def move_selected_target(button_text):
+    print("move_selected_target")
     global SELECTED_TARGET_FACE_INDEX
 
     if button_text == "⬅ Move left":
@@ -435,11 +446,13 @@ def move_selected_target(button_text):
 
 
 def on_select_target_face(evt: gr.SelectData):
+    print("on_select_target_face")
     global SELECTED_TARGET_FACE_INDEX
 
     SELECTED_TARGET_FACE_INDEX = evt.index
 
 def remove_selected_target_face():
+    print("remove_selected_target_face")
     if len(ui.globals.ui_target_thumbs) > SELECTED_TARGET_FACE_INDEX:
         f = roop.globals.TARGET_FACES.pop(SELECTED_TARGET_FACE_INDEX)
         del f
@@ -450,50 +463,91 @@ def remove_selected_target_face():
 
 
 def on_use_face_from_selected(files, frame_num):
+    files=['E:\\Files\\ROOPU\\new\\f1.png', 'E:\\Files\\ROOPU\\new\\f2.png']
+    print(files,frame_num)
+    print("on_use_face_from_selected -set target face")
     global IS_INPUT, SELECTION_FACES_DATA
-
     IS_INPUT = False
     thumbs = []
     
-    roop.globals.target_path = files[selected_preview_index].name
-    if util.is_image(roop.globals.target_path) and not roop.globals.target_path.lower().endswith(('gif')):
-        SELECTION_FACES_DATA = extract_face_images(roop.globals.target_path,  (False, 0))
-        if len(SELECTION_FACES_DATA) > 0:
-            for f in SELECTION_FACES_DATA:
-                image = util.convert_to_gradio(f[1])
-                thumbs.append(image)
+    #roop.globals.target_path = files[selected_preview_index].name
+    for img_path in files:
+        roop.globals.target_path=img_path
+        if util.is_image(roop.globals.target_path) and not roop.globals.target_path.lower().endswith(('gif')):
+            SELECTION_FACES_DATA = extract_face_images(roop.globals.target_path, (False, 0))
+            if len(SELECTION_FACES_DATA) > 0:
+                for f in SELECTION_FACES_DATA:
+                    image = util.convert_to_gradio(f[1])
+                    thumbs.append(image)
+            else:
+                gr.Info('No faces detected!')
+                roop.globals.target_path = None
+        elif util.is_video(roop.globals.target_path) or roop.globals.target_path.lower().endswith(('gif')):
+            selected_frame = frame_num
+            SELECTION_FACES_DATA = extract_face_images(roop.globals.target_path, (True, selected_frame))
+            if len(SELECTION_FACES_DATA) > 0:
+                for f in SELECTION_FACES_DATA:
+                    image = util.convert_to_gradio(f[1])
+                    thumbs.append(image)
+            else:
+                gr.Info('No faces detected!')
+                roop.globals.target_path = None
         else:
-            gr.Info('No faces detected!')
+            gr.Info('Unknown image/video type!')
             roop.globals.target_path = None
-                
-    elif util.is_video(roop.globals.target_path) or roop.globals.target_path.lower().endswith(('gif')):
-        selected_frame = frame_num
-        SELECTION_FACES_DATA = extract_face_images(roop.globals.target_path, (True, selected_frame))
-        if len(SELECTION_FACES_DATA) > 0:
-            for f in SELECTION_FACES_DATA:
-                image = util.convert_to_gradio(f[1])
-                thumbs.append(image)
-        else:
-            gr.Info('No faces detected!')
-            roop.globals.target_path = None
-    else:
-        gr.Info('Unknown image/video type!')
-        roop.globals.target_path = None
 
-    if len(thumbs) == 1:
         roop.globals.TARGET_FACES.append(SELECTION_FACES_DATA[0][0])
-        ui.globals.ui_target_thumbs.append(thumbs[0])
-        return gr.Row(visible=False), None, ui.globals.ui_target_thumbs, gr.Dropdown(value='Selected face')
+    for i in thumbs:
+        ui.globals.ui_target_thumbs.append(i)
+    print("x", len(roop.globals.TARGET_FACES))
+    return gr.Row(visible=False), None, ui.globals.ui_target_thumbs, gr.Dropdown(value='Selected face')
 
-    return gr.Row(visible=True), thumbs, gr.Gallery(visible=True), gr.Dropdown(visible=True)
+    #return gr.Row(visible=True), thumbs, gr.Gallery(visible=True), gr.Dropdown(visible=True)
+
+
+    # roop.globals.target_path = files[0]
+    #
+    # if util.is_image(roop.globals.target_path) and not roop.globals.target_path.lower().endswith(('gif')):
+    #     SELECTION_FACES_DATA = extract_face_images(roop.globals.target_path,  (False, 0))
+    #     if len(SELECTION_FACES_DATA) > 0:
+    #         for f in SELECTION_FACES_DATA:
+    #             image = util.convert_to_gradio(f[1])
+    #             thumbs.append(image)
+    #     else:
+    #         gr.Info('No faces detected!')
+    #         roop.globals.target_path = None
+    #
+    # elif util.is_video(roop.globals.target_path) or roop.globals.target_path.lower().endswith(('gif')):
+    #     selected_frame = frame_num
+    #     SELECTION_FACES_DATA = extract_face_images(roop.globals.target_path, (True, selected_frame))
+    #     if len(SELECTION_FACES_DATA) > 0:
+    #         for f in SELECTION_FACES_DATA:
+    #             image = util.convert_to_gradio(f[1])
+    #             thumbs.append(image)
+    #     else:
+    #         gr.Info('No faces detected!')
+    #         roop.globals.target_path = None
+    # else:
+    #     gr.Info('Unknown image/video type!')
+    #     roop.globals.target_path = None
+
+    # if len(thumbs) == 1:
+    #     roop.globals.TARGET_FACES.append(SELECTION_FACES_DATA[0][0])
+    #     ui.globals.ui_target_thumbs.append(thumbs[0])
+    #     print("x",len(roop.globals.TARGET_FACES) )
+    #     return gr.Row(visible=False), None, ui.globals.ui_target_thumbs, gr.Dropdown(value='Selected face')
+    #
+    # return gr.Row(visible=True), thumbs, gr.Gallery(visible=True), gr.Dropdown(visible=True)
 
 
 def on_select_face(evt: gr.SelectData):  # SelectData is a subclass of EventData
+    print("on_select_face")
     global SELECTED_FACE_INDEX
     SELECTED_FACE_INDEX = evt.index
 
 
 def on_selected_face():
+    print("on_selected_face")
     global IS_INPUT, SELECTED_FACE_INDEX, SELECTION_FACES_DATA
     
     fd = SELECTION_FACES_DATA[SELECTED_FACE_INDEX]
@@ -507,17 +561,51 @@ def on_selected_face():
         return ui.globals.ui_input_thumbs, gr.Gallery(visible=True), gr.Dropdown(visible=True)
     else:
         roop.globals.TARGET_FACES.append(fd[0])
+        print(roop.globals.TARGET_FACES)
         ui.globals.ui_target_thumbs.append(image)
         return gr.Gallery(visible=True), ui.globals.ui_target_thumbs, gr.Dropdown(value='Selected face')
 
 #        bt_faceselect.click(fn=on_selected_face, outputs=[dynamic_face_selection, face_selection, input_faces, target_faces])
 
 def on_end_face_selection():
+    print("on_end_face_selection")
     return gr.Column(visible=False), None
 
 
+def save_masked_image(maskimage):
+    # Convert NumPy array (maskimage) to PIL Image in RGBA mode
+    pil_image = Image.fromarray(maskimage.astype(np.uint8))
+
+    # Convert RGBA to RGB (remove the alpha channel)
+    pil_image_rgb = pil_image.convert("RGB")
+
+    # Save the image as a .jpg file
+    pil_image_rgb.save("masked_image.jpg", format="JPEG")
+    return "masked_image.jpg"
+# Preview frame
 def on_preview_frame_changed(frame_num, files, fake_preview, enhancer, detection, face_distance, blend_ratio,
                               selected_mask_engine, clip_text, no_face_action, vr_mode, auto_rotate, maskimage, show_face_area, restore_original_mouth, num_steps, upsample):
+    print("on_preview_frame_changed")
+    # print(f"""
+    # frame_num: {frame_num}
+    # files: {files}
+    # fake_preview: {fake_preview}
+    # enhancer: {enhancer}
+    # detection: {detection}
+    # face_distance: {face_distance}
+    # blend_ratio: {blend_ratio}
+    # selected_mask_engine: {selected_mask_engine}
+    # clip_text: {clip_text}
+    # no_face_action: {no_face_action}
+    # vr_mode: {vr_mode}
+    # auto_rotate: {auto_rotate}
+    #
+    # show_face_area: {show_face_area}
+    # restore_original_mouth: {restore_original_mouth}
+    # num_steps: {num_steps}
+    # upsample: {upsample}
+    # """)
+
     global SELECTED_INPUT_FACE_INDEX, manual_masking, current_video_fps
 
     from roop.core import live_swap, get_processing_plugins
@@ -550,9 +638,9 @@ def on_preview_frame_changed(frame_num, files, fake_preview, enhancer, detection
     if current_frame is None:
         return None, None, gr.Slider(info=timeinfo)
     
-    layers = None
-    if maskimage is not None:
-        layers = maskimage["layers"]
+    # layers = None
+    # if maskimage is not None:
+    #     layers = maskimage["layers"]
 
     if not fake_preview or len(roop.globals.INPUT_FACESETS) < 1:
         return gr.Image(value=util.convert_to_gradio(current_frame), visible=True), gr.ImageEditor(visible=False), gr.Slider(info=timeinfo)
@@ -570,7 +658,7 @@ def on_preview_frame_changed(frame_num, files, fake_preview, enhancer, detection
     mask_engine = map_mask_engine(selected_mask_engine, clip_text)
 
     roop.globals.execution_threads = roop.globals.CFG.max_threads
-    mask = layers[0] if layers is not None else None
+    #mask = layers[0] if layers is not None else None
     face_index = SELECTED_INPUT_FACE_INDEX
     if len(roop.globals.INPUT_FACESETS) <= face_index:
         face_index = 0
@@ -584,6 +672,7 @@ def on_preview_frame_changed(frame_num, files, fake_preview, enhancer, detection
     return gr.Image(value=util.convert_to_gradio(current_frame), visible=True), gr.ImageEditor(visible=False), gr.Slider(info=timeinfo)
 
 def map_mask_engine(selected_mask_engine, clip_text):
+    print("map_mask_engine")
     if selected_mask_engine == "Clip2Seg":
         mask_engine = "mask_clip2seg"
         if clip_text is None or len(clip_text) < 1:
@@ -596,6 +685,7 @@ def map_mask_engine(selected_mask_engine, clip_text):
 
 
 def on_toggle_masking(previewimage, mask):
+    print("on_toggle_masking")
     global manual_masking
 
     manual_masking = not manual_masking
@@ -607,9 +697,11 @@ def on_toggle_masking(previewimage, mask):
     return gr.Image(visible=True), gr.ImageEditor(visible=False)
 
 def gen_processing_text(start, end):
+    print("gen_processing_text")
     return f'Processing frame range [{start} - {end}]'
 
 def on_set_frame(sender:str, frame_num):
+    print("on_set_frame")
     global selected_preview_index, list_files_process
     
     idx = selected_preview_index
@@ -627,6 +719,7 @@ def on_set_frame(sender:str, frame_num):
 
 
 def on_preview_mask(frame_num, files, clip_text, mask_engine):
+    print("on_preview_mask")
     from roop.core import live_swap, get_processing_plugins
     global is_processing
 
@@ -655,22 +748,26 @@ def on_preview_mask(frame_num, files, clip_text, mask_engine):
 
 
 def on_clear_input_faces():
+    print("on_clear_input_faces")
     ui.globals.ui_input_thumbs.clear()
     roop.globals.INPUT_FACESETS.clear()
     return ui.globals.ui_input_thumbs
 
 def on_clear_destfiles():
+    print("on_clear_destfiles")
     roop.globals.TARGET_FACES.clear()
     ui.globals.ui_target_thumbs.clear()
     return ui.globals.ui_target_thumbs, gr.Dropdown(value="First found")    
 
 
 def index_of_no_face_action(dropdown_text):
+    print("index_of_no_face_action")
     global no_face_choices
 
     return no_face_choices.index(dropdown_text) 
 
 def translate_swap_mode(dropdown_text):
+    print("translate_swap_mode")
     if dropdown_text == "Selected face":
         return "selected"
     elif dropdown_text == "First found":
@@ -687,10 +784,36 @@ def translate_swap_mode(dropdown_text):
 
 def start_swap( output_method, enhancer, detection, keep_frames, wait_after_extraction, skip_audio, face_distance, blend_ratio,
                 selected_mask_engine, clip_text, processing_method, no_face_action, vr_mode, autorotate, restore_original_mouth, num_swap_steps, upsample, imagemask, progress=gr.Progress()):
+    print("start_swap")
+    # Printing all parameter values
+    # print("Output Method:", output_method)
+    # print("Enhancer:", enhancer)
+    # print("Detection:", detection)
+    # print("Keep Frames:", keep_frames)
+    # print("Wait After Extraction:", wait_after_extraction)
+    # print("Skip Audio:", skip_audio)
+    # print("Face Distance:", face_distance)
+    # print("Blend Ratio:", blend_ratio)
+    # print("Selected Mask Engine:", selected_mask_engine)
+    # print("Clip Text:", clip_text)
+    # print("Processing Method:", processing_method)
+    # print("No Face Action:", no_face_action)
+    # print("VR Mode:", vr_mode)
+    # print("Auto-rotate:", autorotate)
+    # print("Restore Original Mouth:", restore_original_mouth)
+    # print("Number of Swap Steps:", num_swap_steps)
+    # print("Upsample:", upsample)
+    # print("Image Mask:", imagemask)
+    # print("Progress:", progress)
     from ui.main import prepare_environment
     from roop.core import batch_process_regular
     global is_processing, list_files_process
-
+    print("isprocessing ",is_processing)
+    print("list_files_process ",list_files_process)
+    for p in list_files_process:
+        print(p.filename,p.finalname)
+        print(p.fps)
+        print(p.startframe,p.endframe)
     if list_files_process is None or len(list_files_process) <= 0:
         return gr.Button(variant="primary"), None, None
     
@@ -728,8 +851,9 @@ def start_swap( output_method, enhancer, detection, keep_frames, wait_after_extr
     roop.globals.video_encoder = roop.globals.CFG.output_video_codec
     roop.globals.video_quality = roop.globals.CFG.video_quality
     roop.globals.max_memory = roop.globals.CFG.memory_limit if roop.globals.CFG.memory_limit > 0 else None
-
+    print("batch strat")
     batch_process_regular(output_method, list_files_process, mask_engine, clip_text, processing_method == "In-Memory processing", imagemask, restore_original_mouth, num_swap_steps, progress, SELECTED_INPUT_FACE_INDEX)
+    print("batch end")
     is_processing = False
     outdir = pathlib.Path(roop.globals.output_path)
     outfiles = [str(item) for item in outdir.rglob("*") if item.is_file()]
@@ -740,12 +864,14 @@ def start_swap( output_method, enhancer, detection, keep_frames, wait_after_extr
 
 
 def stop_swap():
+    print("stop_swap")
     roop.globals.processing = False
     gr.Info('Aborting processing - please wait for the remaining threads to be stopped')
     return gr.Button(variant="primary", interactive=True),gr.Button(variant="secondary", interactive=False),None
 
 
 def on_fps_changed(fps):
+    print("on_fps_changed")
     global selected_preview_index, list_files_process
 
     if len(list_files_process) < 1 or list_files_process[selected_preview_index].endframe < 1:
@@ -754,20 +880,22 @@ def on_fps_changed(fps):
 
 
 def on_destfiles_changed(destfiles):
+    print("on_destfiles_changed - Added file to process list") #
     global selected_preview_index, list_files_process, current_video_fps
+    #print(selected_preview_index,list_files_process,current_video_fps) # 0 [] 50
 
     if destfiles is None or len(destfiles) < 1:
         list_files_process.clear()
         return gr.Slider(value=1, maximum=1, info='0:00:00'), ''
     
     for f in destfiles:
+        #print(f)
         list_files_process.append(ProcessEntry(f.name, 0,0, 0))
-
     selected_preview_index = 0
     idx = selected_preview_index    
-    
+    #print("idx",idx)
     filename = list_files_process[idx].filename
-    
+    #print("filename ",filename)
     if util.is_video(filename) or filename.lower().endswith('gif'):
         total_frames = get_video_frame_total(filename)
         if total_frames is None or total_frames < 1:
@@ -778,12 +906,17 @@ def on_destfiles_changed(destfiles):
     else:
         total_frames = 1
     list_files_process[idx].endframe = total_frames
+    # print(list_files_process[idx].filename)
+    # print(list_files_process[idx].endframe)
+    # print("fps:",list_files_process[idx].fps)
+    print("len:::::: ",len(list_files_process))
     if total_frames > 1:
         return gr.Slider(value=1, maximum=total_frames, info='0:00:00'), gen_processing_text(list_files_process[idx].startframe,list_files_process[idx].endframe)
     return gr.Slider(value=1, maximum=total_frames, info='0:00:00'), ''
 
 
 def on_destfiles_selected(evt: gr.SelectData):
+    print("on_destfiles_selected")
     global selected_preview_index, list_files_process, current_video_fps
 
     if evt is not None:
@@ -805,11 +938,13 @@ def on_destfiles_selected(evt: gr.SelectData):
 
 
 def on_resultfiles_selected(evt: gr.SelectData, files):
+    print("on_resultfiles_selected")
     selected_index = evt.index
     filename = files[selected_index].name
     return display_output(filename)
 
 def on_resultfiles_finished(files):
+    print("on_resultfiles_finished")
     selected_index = 0
     if files is None or len(files) < 1:
         return None, None
@@ -819,12 +954,14 @@ def on_resultfiles_finished(files):
 
 
 def get_gradio_output_format():
+    print("get_gradio_output_format")
     if roop.globals.CFG.output_image_format == "jpg":
         return "jpeg"
     return roop.globals.CFG.output_image_format
 
 
 def display_output(filename):
+    print("display_output")
     if util.is_video(filename) and roop.globals.CFG.output_show_video:
         return gr.Image(visible=False), gr.Video(visible=True, value=filename)
     else:
@@ -836,3 +973,4 @@ def display_output(filename):
 
 
 on_srcfile_changed(['aa'])
+# on_use_face_from_selected(["a"],1)
