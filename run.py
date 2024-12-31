@@ -18,6 +18,12 @@ def get_files(directory, extension=None, start_range=None, end_range=None):
                 file_list.append(full_path)
     return file_list
 
+def get_all_file_paths(directory):
+    file_paths = []
+    for root, _, files in os.walk(directory):
+        for file in files:
+            file_paths.append(os.path.join(root, file))
+    return file_paths
 
 upsample_options = ["128px", "256px", "512px"]
 enhancer_options = ["None", "Codeformer", "DMDNet", "GFPGAN", "GPEN", "Restoreformer++"]
