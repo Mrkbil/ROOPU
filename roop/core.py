@@ -110,31 +110,41 @@ def suggest_execution_threads() -> int:
 #             import resource
 #             resource.setrlimit(resource.RLIMIT_DATA, (memory, memory))
 
+# import torch
+# import platform
+#
+# def limit_resources() -> None:
+#     if roop.globals.max_memory:
+#         memory = roop.globals.max_memory * 1024 ** 3
+#         if platform.system().lower() == 'darwin':
+#             memory = roop.globals.max_memory * 1024 ** 6
+#         if platform.system().lower() == 'windows':
+#             import ctypes
+#             kernel32 = ctypes.windll.kernel32
+#             kernel32.SetProcessWorkingSetSize(-1, ctypes.c_size_t(memory), ctypes.c_size_t(memory))
+#         else:
+#             import resource
+#             resource.setrlimit(resource.RLIMIT_DATA, (memory, memory))
+#
+#     if torch.cuda.is_available():
+#         device = torch.device('cuda')
+#         torch.cuda.set_device(device)
+#         torch.cuda.empty_cache()
+#         torch.backends.cudnn.benchmark = True
+#         print(f"Using GPU: {torch.cuda.get_device_name(device)}")
+#         print(f"Total GPU memory: {torch.cuda.get_device_properties(device).total_memory / 1024**3:.2f} GB")
+#     else:
+#         print("CUDA device not found. Using CPU instead.")
+
 import torch
-import platform
 
 def limit_resources() -> None:
-    if roop.globals.max_memory:
-        memory = roop.globals.max_memory * 1024 ** 3
-        if platform.system().lower() == 'darwin':
-            memory = roop.globals.max_memory * 1024 ** 6
-        if platform.system().lower() == 'windows':
-            import ctypes
-            kernel32 = ctypes.windll.kernel32
-            kernel32.SetProcessWorkingSetSize(-1, ctypes.c_size_t(memory), ctypes.c_size_t(memory))
-        else:
-            import resource
-            resource.setrlimit(resource.RLIMIT_DATA, (memory, memory))
-
+    # Ensure that PyTorch uses the full GPU resources
     if torch.cuda.is_available():
-        device = torch.device('cuda')
-        torch.cuda.set_device(device)
-        torch.cuda.empty_cache()
-        torch.backends.cudnn.benchmark = True
-        print(f"Using GPU: {torch.cuda.get_device_name(device)}")
-        print(f"Total GPU memory: {torch.cuda.get_device_properties(device).total_memory / 1024**3:.2f} GB")
-    else:
-        print("CUDA device not found. Using CPU instead.")
+        torch.cuda.set_device(0)  # Specify which GPU to use (0 is the first GPU)
+        torch.backends.cudnn.benchmark = True  # This helps in performance for fixed input sizes
+        print("Using full GPU resources with PyTorch.")
+
 
 def release_resources() -> None:
     import gc
