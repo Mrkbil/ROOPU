@@ -29,11 +29,14 @@ target_directory_path = "new/temp/homat/"
 
 
 srcfiles=['E:\\Files\\ROOPU\\new\\Rakibul_Islam_sq.jpg']
-target_faces=[]
+target_faces=['E:\\Files\\ROOPU\\new\\t.png']
+# target_faces=[]
 #target_faces=get_files(target_directory_path, file_extension)
-#destfiles=['E:\\Files\\ROOPU\\new\\temp\\homat\\000001.png']
-destfiles=get_files(directory_path, file_extension)
-
+destfiles=['E:\\Files\\ROOPU\\new\\homat.mp4']
+# destfiles=get_files(directory_path, file_extension)
+print(srcfiles)
+print(target_faces)
+print(destfiles)
 
 on_srcfile_changed(srcfiles)
 on_use_face_from_selected(target_faces,1)
@@ -41,7 +44,7 @@ on_destfiles_changed(destfiles)
 start_swap(
     upsample=upsample_options[0],  # ["128px", "256px", "512px"]
     enhancer=enhancer_options[3],  # ["None", "Codeformer", "DMDNet", "GFPGAN", "GPEN", "Restoreformer++"]
-    detection=detection_options[3], # ["Selected face", "First found", "All input faces", "All faces", "All female", "All male"]
+    detection=detection_options[0], # ["Selected face", "First found", "All input faces", "All faces", "All female", "All male"]
     keep_frames=True,
     wait_after_extraction=False,
     skip_audio=False,
