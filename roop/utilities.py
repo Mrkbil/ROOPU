@@ -231,10 +231,20 @@ def resolve_relative_path(path: str) -> str:
     return os.path.abspath(os.path.join(os.path.dirname(__file__), path))
 
 
+
 def get_device() -> str:
     if len(roop.globals.execution_providers) < 1:
         roop.globals.execution_providers = ["CPUExecutionProvider"]
 
+    # Check for GPU availability
+    if torch.cuda.is_available():
+        print("GPU is available. Using CUDA.")
+        roop.globals.execution_providers = ["CUDAExecutionProvider"]
+    elif torch.backends.mps.is_available():
+        print("Apple MPS (Metal Performance Shaders) is available. Using CoreMLExecutionProvider.")
+        roop.globals.execution_providers = ["CoreMLExecutionProvider"]
+
+    # Determine execution provider
     prov = roop.globals.execution_providers[0]
     if "CoreMLExecutionProvider" in prov:
         return "mps"
@@ -243,7 +253,6 @@ def get_device() -> str:
     if "OpenVINOExecutionProvider" in prov:
         return "mkl"
     return "cpu"
-
 
 def str_to_class(module_name, class_name) -> Any:
     from importlib import import_module
