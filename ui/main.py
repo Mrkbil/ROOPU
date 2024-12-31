@@ -7,10 +7,10 @@ import roop.utilities as util
 import ui.globals as uii
 
 
-from ui.tabs.livecam_tab import livecam_tab
-from ui.tabs.facemgr_tab import facemgr_tab
-from ui.tabs.extras_tab import extras_tab
-from ui.tabs.settings_tab import settings_tab
+# from ui.tabs.livecam_tab import livecam_tab
+# from ui.tabs.facemgr_tab import facemgr_tab
+# from ui.tabs.extras_tab import extras_tab
+# from ui.tabs.settings_tab import settings_tab
 
 roop.globals.keep_fps = None
 roop.globals.keep_frames = None
@@ -69,10 +69,10 @@ def run():
                     gr.Markdown(f"### [{roop.metadata.name} {roop.metadata.version}](https://github.com/C0untFloyd/roop-unleashed)")
                     gr.HTML(util.create_version_html(), elem_id="versions")
             # faceswap_tab()
-            livecam_tab()
-            facemgr_tab()
-            extras_tab()
-            settings_tab()
+            # livecam_tab()
+            # facemgr_tab()
+            # extras_tab()
+            # settings_tab()
         launch_browser = roop.globals.CFG.launch_browser
 
         uii.ui_restart_server = False
