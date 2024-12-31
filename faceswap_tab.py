@@ -7,7 +7,7 @@ from PIL import Image
 from settings import Settings
 import roop.utilities as util
 import roop.globals
-import ui.globals
+
 from roop.face_util import extract_face_images, create_blank_image
 from roop.capturer import get_video_frame, get_video_frame_total, get_image_frame
 from roop.ProcessEntry import ProcessEntry
@@ -42,7 +42,14 @@ current_video_fps = 50
 manual_masking = False
 
 
-
+def prepare_environment():
+    # roop.globals.output_path = os.path.abspath(os.path.join(os.getcwd(), "output"))
+    os.makedirs(roop.globals.output_path, exist_ok=True)
+    if not roop.globals.CFG.use_os_temp_folder:
+        os.environ["TEMP"] = os.environ["TMP"] = os.path.abspath(os.path.join(os.getcwd(), "temp"))
+    os.makedirs(os.environ["TEMP"], exist_ok=True)
+    os.environ["GRADIO_TEMP_DIR"] = os.environ["TEMP"]
+    os.environ['GRADIO_ANALYTICS_ENABLED'] = '0'
 
 def on_mask_top_changed(mask_offset):
     set_mask_offset(0, mask_offset)
@@ -116,7 +123,7 @@ def on_srcfile_changed(srcfiles, progress=gr.Progress()):
     IS_INPUT = True
 
     if srcfiles is None or len(srcfiles) < 1:
-        return gr.Column(visible=False), None, ui.globals.ui_input_thumbs, None
+        return None
 
     for f in srcfiles:    
         #source_path = f.name
@@ -212,8 +219,6 @@ def on_use_face_from_selected(files, frame_num):
             roop.globals.target_path = None
 
         roop.globals.TARGET_FACES.append(SELECTION_FACES_DATA[0][0])
-    for i in thumbs:
-        ui.globals.ui_target_thumbs.append(i)
     print("x", len(roop.globals.TARGET_FACES))
 
 
@@ -286,7 +291,6 @@ def start_swap(upsample, enhancer, detection, keep_frames, wait_after_extraction
     print("start_swap")
     imagemask = None
     # print("Image Mask:", imagemask)
-    from ui.main import prepare_environment
     from roop.core import batch_process_regular
     global is_processing, list_files_process
     print("isprocessing ", is_processing)
