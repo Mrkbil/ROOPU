@@ -34,9 +34,6 @@ target_faces=[]
 #target_faces=get_files(target_directory_path, file_extension)
 destfiles=['E:\\Files\\ROOPU\\new\\homa.mp4']
 # destfiles=get_files(directory_path, file_extension)
-print(srcfiles)
-print(target_faces)
-print(destfiles)
 
 on_srcfile_changed(srcfiles)
 on_use_face_from_selected(target_faces,1)

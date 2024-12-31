@@ -70,7 +70,7 @@ def on_mask_blur_changed(mask_offset):
 
 
 def set_mask_offset(index, mask_offset):
-    print("set_mask_offset")
+    # print("set_mask_offset")
     global SELECTED_INPUT_FACE_INDEX
 
     if len(roop.globals.INPUT_FACESETS) > SELECTED_INPUT_FACE_INDEX:
@@ -119,6 +119,7 @@ def map_mask_engine(selected_mask_engine, clip_text):
 def on_srcfile_changed(srcfiles, progress=gr.Progress()):
 
     global SELECTION_FACES_DATA, IS_INPUT, input_faces, face_selection, last_image
+    print("Source Faces: ",len(srcfiles))
     print(srcfiles)
     IS_INPUT = True
 
@@ -175,7 +176,7 @@ def on_srcfile_changed(srcfiles, progress=gr.Progress()):
                 # ui.globals.ui_input_thumbs.append(image)
                 roop.globals.INPUT_FACESETS.append(face_set)
 
-    print(roop.globals.INPUT_FACESETS)
+    #print(roop.globals.INPUT_FACESETS)
     #progress(1.0)
     return None, None, None,None
 
@@ -185,9 +186,9 @@ def on_srcfile_changed(srcfiles, progress=gr.Progress()):
 
 
 def on_use_face_from_selected(files, frame_num):
-
-    print(files,frame_num)
-    print("on_use_face_from_selected -set target face")
+    print("Target Faces: ", files)
+    # print(files,frame_num)
+    # print("on_use_face_from_selected -set target face")
     global IS_INPUT, SELECTION_FACES_DATA
     IS_INPUT = False
     thumbs = []
@@ -219,13 +220,13 @@ def on_use_face_from_selected(files, frame_num):
             roop.globals.target_path = None
 
         roop.globals.TARGET_FACES.append(SELECTION_FACES_DATA[0][0])
-    print("x", len(roop.globals.TARGET_FACES))
+    print("Num of Target Faces: ", len(roop.globals.TARGET_FACES))
 
 
 
 def on_destfiles_changed(destfiles):
-    print("on_destfiles_changed - Added file to process list") #
-
+    #print("on_destfiles_changed - Added file to process list") #
+    #print("Destination Files:",destfiles)
     global selected_preview_index, list_files_process, current_video_fps
     #print(selected_preview_index,list_files_process,current_video_fps) # 0 [] 50
 
@@ -255,14 +256,14 @@ def on_destfiles_changed(destfiles):
     # print(list_files_process[idx].filename)
     # print(list_files_process[idx].endframe)
     # print("fps:",list_files_process[idx].fps)
-    print("len:::::: ",len(list_files_process))
+    print("Files to Process:",len(list_files_process))
     # if total_frames > 1:
     #     return gr.Slider(value=1, maximum=total_frames, info='0:00:00'), gen_processing_text(list_files_process[idx].startframe,list_files_process[idx].endframe)
     # return gr.Slider(value=1, maximum=total_frames, info='0:00:00'), ''
 
 
 def on_destfiles_selected(evt: gr.SelectData):
-    print("on_destfiles_selected")
+    #print("on_destfiles_selected")
     global selected_preview_index, list_files_process, current_video_fps
 
     if evt is not None:
@@ -288,13 +289,12 @@ def start_swap(upsample, enhancer, detection, keep_frames, wait_after_extraction
                skip_audio, face_distance, blend_ratio, selected_mask_engine,
                clip_text, processing_method, no_face_action, vr_mode, autorotate,
                restore_original_mouth, num_swap_steps,output_method,progress=gr.Progress()):
-    print("start_swap")
+    #print("start_swap")
     imagemask = None
     # print("Image Mask:", imagemask)
     from roop.core import batch_process_regular
     global is_processing, list_files_process
-    print("isprocessing ", is_processing)
-    print("list_files_process ", list_files_process)
+    #print("List_files_process ", len(list_files_process))
     # for p in list_files_process:
     #     print(p.filename,p.finalname)
     #     print(p.fps)
@@ -307,12 +307,11 @@ def start_swap(upsample, enhancer, detection, keep_frames, wait_after_extraction
     if False:#roop.globals.CFG.clear_output:
         clean_dir(roop.globals.output_path)
 
-    print("batch a3")
     if not util.is_installed("ffmpeg"):
         msg = "ffmpeg is not installed! No video processing possible."
         gr.Warning(msg)
 
-    roop.globals.CFG = Settings(config_file="config.yaml")
+    roop.globals.CFG = Settings(config_file="config_colab.yaml")
     prepare_environment()
     #
     roop.globals.selected_enhancer = enhancer
@@ -342,11 +341,11 @@ def start_swap(upsample, enhancer, detection, keep_frames, wait_after_extraction
     roop.globals.video_encoder = roop.globals.CFG.output_video_codec
     roop.globals.video_quality = roop.globals.CFG.video_quality
     roop.globals.max_memory = roop.globals.CFG.memory_limit if roop.globals.CFG.memory_limit > 0 else None
-    print("batch strat")
+    print("Batch Start")
     batch_process_regular(output_method, list_files_process, mask_engine, clip_text,
                           processing_method == "In-Memory processing", imagemask, restore_original_mouth,
                           num_swap_steps, progress, SELECTED_INPUT_FACE_INDEX)
-    print("batch end")
+    print("Batch End")
 
 
 
