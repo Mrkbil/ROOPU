@@ -219,8 +219,8 @@ def on_use_face_from_selected(files, frame_num):
         else:
             gr.Info('Unknown image/video type!')
             roop.globals.target_path = None
-
-        roop.globals.TARGET_FACES.append(SELECTION_FACES_DATA[0][0])
+        if SELECTION_FACES_DATA and len(SELECTION_FACES_DATA[0]) > 0:
+            roop.globals.TARGET_FACES.append(SELECTION_FACES_DATA[0][0])
     print("Num of Target Faces: ", len(roop.globals.TARGET_FACES))
 
 
